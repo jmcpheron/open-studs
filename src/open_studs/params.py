@@ -43,6 +43,14 @@ STUD_HEIGHT_MULTIPLIERS = {
     "diamond":      1.4,
     "flat_pyramid": 0.4,
     "screw_head":   0.25,
+    # industrial set
+    "rivet":        0.4,
+    "hex_bolt":     0.5,
+    "washer":       0.25,
+    # festival / symbolic set
+    "star":         0.35,
+    "heart":        0.35,
+    "lightning":    0.35,
 }
 
 # --- buckle latch defaults --------------------------------------------------
@@ -53,6 +61,13 @@ BUCKLE_HOLE_DIAMETER  = 3.5
 BUCKLE_PIN_DIAMETER   = 3.2   # slightly under hole, for friction fit
 BUCKLE_FRAME_LENGTH   = 12
 BUCKLE_TONGUE_LENGTH  = 35
+
+# --- magnetic latch defaults ------------------------------------------------
+
+MAGNET_DIAMETER     = 6     # mm — outer diameter of the neodymium disc
+MAGNET_THICKNESS    = 2     # mm
+MAGNET_TOLERANCE    = 0.3   # mm of pocket slack for clean drop-in
+MAGNET_PUCK_HEIGHT  = 2.6   # mm — puck rises this far above the band
 
 # --- single_row pattern defaults --------------------------------------------
 

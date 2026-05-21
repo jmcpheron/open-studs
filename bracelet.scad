@@ -20,6 +20,12 @@ use <studs/long_spike.scad>
 use <studs/diamond.scad>
 use <studs/flat_pyramid.scad>
 use <studs/screw_head.scad>
+use <studs/rivet.scad>
+use <studs/hex_bolt.scad>
+use <studs/washer.scad>
+use <studs/star.scad>
+use <studs/heart.scad>
+use <studs/lightning.scad>
 
 use <latches/buckle.scad>
 use <latches/snap.scad>
@@ -57,21 +63,51 @@ module place_stud(name, size, tip_radius) {
     else if (name == "diamond")       stud_diamond(size, tip_radius);
     else if (name == "flat_pyramid")  stud_flat_pyramid(size, tip_radius);
     else if (name == "screw_head")    stud_screw_head(size, tip_radius);
+    else if (name == "rivet")         stud_rivet(size, tip_radius);
+    else if (name == "hex_bolt")      stud_hex_bolt(size, tip_radius);
+    else if (name == "washer")        stud_washer(size, tip_radius);
+    else if (name == "star")          stud_star(size, tip_radius);
+    else if (name == "heart")         stud_heart(size, tip_radius);
+    else if (name == "lightning")     stud_lightning(size, tip_radius);
     else echo(str("WARN: unknown stud_module '", name, "'"));
 }
 
+// Latch dispatch: each latch defines left and right halves relative to its
+// own origin (left extends -X, right extends +X). The caller places the
+// left invocation at the band's left end (x=0) and translates the right
+// invocation to band_length. No mirror — the latch already knows which side
+// is which.
+
 module place_latch(name, band_width, band_thickness, band_length) {
-    if      (name == "buckle") {
-        latch_buckle(band_width, band_thickness, end = "left");
-        translate([band_length, 0, 0])
-            mirror([1, 0, 0]) latch_buckle(band_width, band_thickness, end = "right");
-    }
-    else if (name == "snap")              latch_snap(band_width, band_thickness);
-    else if (name == "loop_post")         latch_loop_post(band_width, band_thickness);
-    else if (name == "friction_overlap")  latch_friction_overlap(band_width, band_thickness);
-    else if (name == "magnetic")          latch_magnetic(band_width, band_thickness);
+    if      (name == "buckle")            _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "snap")              _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "loop_post")         _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "friction_overlap")  _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "magnetic")          _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "none") { /* no latch */ }
     else echo(str("WARN: unknown latch '", name, "'"));
+}
+
+module _place_two_ended(name, band_width, band_thickness, band_length) {
+    if      (name == "buckle") {
+        latch_buckle(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0]) latch_buckle(band_width, band_thickness, end = "right");
+    }
+    else if (name == "snap") {
+        latch_snap(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0]) latch_snap(band_width, band_thickness, end = "right");
+    }
+    else if (name == "loop_post") {
+        latch_loop_post(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0]) latch_loop_post(band_width, band_thickness, end = "right");
+    }
+    else if (name == "friction_overlap") {
+        latch_friction_overlap(band_width, band_thickness);
+    }
+    else if (name == "magnetic") {
+        latch_magnetic(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0]) latch_magnetic(band_width, band_thickness, end = "right");
+    }
 }
 
 function pattern_positions(name, band_length, band_width, rows, spacing) =

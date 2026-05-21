@@ -17,3 +17,9 @@ Height multipliers, relative to the base size:
 | diamond | × 1.40 |
 | flat_pyramid | × 0.40 |
 | screw_head | × 0.25 |
+| rivet | × 0.40 |
+| hex_bolt | × 0.50 |
+| washer | × 0.25 |
+| star | × 0.35 |
+| heart | × 0.35 |
+| lightning | × 0.35 |
