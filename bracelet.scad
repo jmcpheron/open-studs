@@ -1,4 +1,4 @@
-// open-studs — parametric studded bracelet
+// open-studs — parametric studded bracelet, source-of-truth.
 // MIT licensed. See LICENSE-MIT.
 //
 // Top-level entry point: studded_bracelet(...).

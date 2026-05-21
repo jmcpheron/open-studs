@@ -1,11 +1,9 @@
 name: pages
 
-# Publishes docs/ to GitHub Pages on every push to main.
+# Builds docs/ with Jekyll and publishes to GitHub Pages on every push to
+# main. After this lands the site is at https://jmcpheron.github.io/open-studs/.
 #
-# After this workflow lands, the site will be at:
-#   https://jmcpheron.github.io/open-studs/
-#
-# One-time setup the user must do: Settings → Pages → Source → "GitHub Actions".
+# One-time user setup: Settings → Pages → Source → "GitHub Actions".
 
 on:
   push:
@@ -14,6 +12,7 @@ on:
       - "docs/**"
       - "README.md"
       - ".github/workflows/pages.yml"
+      - "_config.yml"
   workflow_dispatch:
 
 concurrency:
@@ -26,10 +25,7 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,19 +34,49 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Stage site
-        # docs/ is the site root. We also copy README.md in as index.md
-        # so the landing page is the front-door story, not a directory listing.
+        # README.md becomes the landing page; docs/ tree gets nested under /docs/.
         run: |
-          mkdir -p _site
-          cp -r docs/. _site/
-          cp README.md _site/index.md
-          ls -la _site/
+          mkdir -p _src
+          cp README.md _src/index.md
+          cp -r docs _src/docs
+          # carry over the supporting docs so they're linkable from the index
+          for f in SHAREABLE-CAD.md CONTRIBUTING.md ACKNOWLEDGMENTS.md LICENSE; do
+            [ -f "$f" ] && cp "$f" "_src/$f"
+          done
+          # Jekyll config: minimal theme, nice nav
+          cat > _src/_config.yml <<'EOF'
+          title: open-studs
+          description: Parametric, 3D-printable studded bracelets in TPU
+          theme: minima
+          markdown: kramdown
+          plugins:
+            - jekyll-relative-links
+          relative_links:
+            enabled: true
+            collections: true
+          include:
+            - README.md
+          EOF
+          ls -la _src/
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./_src
+          destination: ./_site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: ./_site
 
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

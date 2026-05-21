@@ -1,5 +1,7 @@
-"""Parameter mirror — every dimension that has a default in the .scad files
-also lives here as a Python constant.
+"""Parameter mirror.
+
+Every dimension that has a default in the .scad files also lives here as a
+Python constant.
 
 This file is the single source of truth for documentation. The `.scad` files
 are the single source of truth for geometry. They must stay in sync; the
