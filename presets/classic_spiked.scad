@@ -3,6 +3,9 @@
 //
 // Long spikes, staggered double-row, leather-style buckle, medium adult.
 // The default that ships in the README's Quick Start example.
+//
+// Auto-rendered to docs/configurator/stls/classic_spiked.stl by the
+// build-presets workflow on every change to the SCAD tree.
 
 include <../bracelet.scad>
 
