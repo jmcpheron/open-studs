@@ -8,7 +8,7 @@
 
 **Parametric, 3D-printable studded bracelets in TPU.** Punk-and-metal aesthetic, flexible like leather, open-source like it should be.
 
-**[→ See the bracelet bent around a wrist with your colors](https://jmcpheron.github.io/open-studs/configurator/)** — interactive showcase with a two-color filament-swap simulator.
+**[→ See the bracelet bent around a wrist with your colors](https://jmcpheron.github.io/open-studs/configurator/)** — interactive showcase with a two-color filament-swap simulator. Three presets to pick from; layers map to a real filament-swap depth.
 
 Designed in OpenSCAD. Browse presets at [jmcpheron.github.io/open-studs](https://jmcpheron.github.io/open-studs). Clone the repo to add your own stud designs, latches, or take it somewhere new.
 

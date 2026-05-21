@@ -5,7 +5,8 @@
 // The default that ships in the README's Quick Start example.
 //
 // Auto-rendered to docs/configurator/stls/classic_spiked.stl by the
-// build-presets workflow on every change to the SCAD tree.
+// build-presets workflow on every change to the SCAD tree. The STL is
+// loaded by docs/configurator/app.js into the curved-bracelet viewer.
 
 include <../bracelet.scad>
 
