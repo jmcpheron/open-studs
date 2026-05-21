@@ -3,11 +3,14 @@
 [![test](https://github.com/jmcpheron/open-studs/actions/workflows/test.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/test.yml)
 [![build-explainers](https://github.com/jmcpheron/open-studs/actions/workflows/build-explainers.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-explainers.yml)
 [![build-scad](https://github.com/jmcpheron/open-studs/actions/workflows/build-scad.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-scad.yml)
+[![build-presets](https://github.com/jmcpheron/open-studs/actions/workflows/build-presets.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-presets.yml)
 [![pages](https://github.com/jmcpheron/open-studs/actions/workflows/pages.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/pages.yml)
 
 **Parametric, 3D-printable studded bracelets in TPU.** Punk-and-metal aesthetic, flexible like leather, open-source like it should be.
 
-Designed in OpenSCAD. Configure your own at [jmcpheron.github.io/open-studs](https://jmcpheron.github.io/open-studs). Clone the repo to add your own stud designs, latches, or take it somewhere new.
+**[→ See the bracelet bent around a wrist with your colors](https://jmcpheron.github.io/open-studs/configurator/)** — interactive showcase with a two-color filament-swap simulator.
+
+Designed in OpenSCAD. Browse presets at [jmcpheron.github.io/open-studs](https://jmcpheron.github.io/open-studs). Clone the repo to add your own stud designs, latches, or take it somewhere new.
 
 This repo follows the **[Shareable CAD](SHAREABLE-CAD.md)** pattern: OpenSCAD as the parametric source-of-truth, Python kernel (`studslab`, `explainers`) for deconstruction, GitHub as the workshop, MakerWorld + Printables as the storefronts.
 

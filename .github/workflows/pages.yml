@@ -34,16 +34,19 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Stage site
-        # README.md becomes the landing page; docs/ tree gets nested under /docs/.
+        # README becomes the landing page. docs/ contents are flattened into
+        # the site root so URLs read cleanly: /configurator/, /devlog/,
+        # /explainers/, /assets/. The configurator's index.html has no
+        # Jekyll front matter, so Jekyll passes it through unchanged.
         run: |
           mkdir -p _src
           cp README.md _src/index.md
-          cp -r docs _src/docs
+          # flatten docs/ — everything under docs/ lands at the site root
+          cp -r docs/. _src/
           # carry over the supporting docs so they're linkable from the index
           for f in SHAREABLE-CAD.md CONTRIBUTING.md ACKNOWLEDGMENTS.md LICENSE; do
             [ -f "$f" ] && cp "$f" "_src/$f"
           done
-          # Jekyll config: minimal theme, nice nav
           cat > _src/_config.yml <<'EOF'
           title: open-studs
           description: Parametric, 3D-printable studded bracelets in TPU
@@ -54,6 +57,10 @@ jobs:
           relative_links:
             enabled: true
             collections: true
+          # Tell Jekyll to leave the configurator directory alone — it's a
+          # static JS app, not Jekyll-templated content.
+          keep_files:
+            - configurator
           include:
             - README.md
           EOF
