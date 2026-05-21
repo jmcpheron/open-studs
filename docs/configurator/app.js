@@ -11,8 +11,8 @@
 // filament swap at layer N (= z = N × 0.2) shows up as a radial swap
 // between the inner-wrist surface and the outer visible surface.
 
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-import { STLLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/STLLoader.js';
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
 const LAYER_HEIGHT = 0.2;  // mm per print layer
 

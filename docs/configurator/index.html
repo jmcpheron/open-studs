@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>open-studs — configurator</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:,">
+  <!-- Import map so Three.js's addon modules can resolve "three" as a bare specifier -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <canvas id="viewer"></canvas>
