@@ -1,0 +1,78 @@
+name: build-scad
+
+# Renders bracelet.scad and sizing_test.scad to PNG previews under
+# docs/assets/ whenever any .scad file changes, and commits the result.
+#
+# Triggers exclude docs/assets/ so the bot's own commits don't loop.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.scad"
+      - "studs/**"
+      - "latches/**"
+      - "patterns/**"
+      - ".github/workflows/build-scad.yml"
+
+concurrency:
+  group: build-scad
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install OpenSCAD + xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openscad xvfb
+          openscad --version
+
+      - name: Render previews
+        run: |
+          mkdir -p docs/assets
+          # --viewall + --autocenter auto-frame the model.
+          # --imgsize sets PNG dimensions.
+          # --colorscheme picks a render style; Cornfield is the OpenSCAD default.
+          for src in bracelet.scad sizing_test.scad; do
+            name="${src%.scad}"
+            xvfb-run -a openscad \
+              --imgsize=1200,800 \
+              --viewall --autocenter \
+              --colorscheme=Cornfield \
+              -o "docs/assets/${name}.png" \
+              "${src}"
+          done
+          ls -la docs/assets/
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet docs/assets/; then
+            echo "No changes to renders — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/assets/
+          git commit -m "ci: regenerate SCAD previews [skip ci]"
+
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected on attempt $attempt; rebasing on origin/main."
+            git pull --rebase origin main
+          done
+          echo "Failed to push after 5 attempts."
+          exit 1

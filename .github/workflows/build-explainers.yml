@@ -1,0 +1,72 @@
+name: build-explainers
+
+# Regenerates docs/explainers/*.md from src/open_studs/params.py whenever
+# the generator or the parameter mirror changes, and pushes the result
+# back to main with a rebase-and-retry loop so it doesn't conflict with
+# other workflows or human pushes racing on the same branch.
+#
+# Triggers do NOT include docs/explainers/, so the bot's own commits
+# (which only write under docs/explainers/) don't loop.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/explainers/**"
+      - "src/open_studs/params.py"
+      - ".github/workflows/build-explainers.yml"
+
+concurrency:
+  group: build-explainers
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need full history to rebase on remote during retry
+          fetch-depth: 0
+          # Use a token that can push back to protected branches if applicable
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Regenerate explainer pages
+        run: uv run explainers build
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet docs/explainers/; then
+            echo "No changes to explainer pages — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/explainers/
+          git commit -m "ci: regenerate explainer pages [skip ci]"
+
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected on attempt $attempt; rebasing on origin/main."
+            git pull --rebase origin main
+          done
+          echo "Failed to push after 5 attempts."
+          exit 1

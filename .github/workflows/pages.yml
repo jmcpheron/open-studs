@@ -1,0 +1,56 @@
+name: pages
+
+# Publishes docs/ to GitHub Pages on every push to main.
+#
+# After this workflow lands, the site will be at:
+#   https://jmcpheron.github.io/open-studs/
+#
+# One-time setup the user must do: Settings → Pages → Source → "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "README.md"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Stage site
+        # docs/ is the site root. We also copy README.md in as index.md
+        # so the landing page is the front-door story, not a directory listing.
+        run: |
+          mkdir -p _site
+          cp -r docs/. _site/
+          cp README.md _site/index.md
+          ls -la _site/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
