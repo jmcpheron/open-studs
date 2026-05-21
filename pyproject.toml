@@ -1,0 +1,49 @@
+[project]
+name = "open-studs"
+version = "0.1.0"
+description = "Parametric, 3D-printable studded bracelets in TPU. Punk-and-metal aesthetic, flexible like leather, open-source like it should be."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Jason McPheron" }]
+keywords = ["3d-printing", "openscad", "parametric", "wearable", "bracelet"]
+dependencies = []
+
+[project.optional-dependencies]
+# Light toolchain — generates explainer pages from the parameter mirror.
+# No OpenSCAD dependency.
+explainers = [
+    "drawsvg>=2.3",
+    "matplotlib>=3.8",
+]
+# Heavy toolchain — shells out to the OpenSCAD CLI for renders. OpenSCAD
+# itself is a system package (brew install openscad / apt install openscad).
+scad = [
+    "pillow>=10.0",
+]
+# Test toolchain.
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+]
+
+[project.scripts]
+studslab = "studslab.cli:main"
+explainers = "explainers.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/jmcpheron/open-studs"
+Source = "https://github.com/jmcpheron/open-studs"
+Configurator = "https://jmcpheron.github.io/open-studs"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/open_studs", "src/studslab", "src/explainers"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0",
+]

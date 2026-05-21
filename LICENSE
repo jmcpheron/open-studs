@@ -1,0 +1,13 @@
+# Licensing
+
+`open-studs` is dual-licensed:
+
+- **Source code** — every `.scad` file, every Python file under `src/`, every build script, every CI workflow — is licensed under the **MIT License**. See [`LICENSE-MIT`](LICENSE-MIT).
+- **Design output and documentation** — STL files, 3MF presets, printed objects, photos, the gallery, this README, the SHAREABLE-CAD pattern doc, every explainer page — is licensed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**. See [`LICENSE-CC-BY`](LICENSE-CC-BY).
+
+Both licenses are permissive. You can use this commercially, modify it, sell prints, ship it inside a closed-source product. The only requirement is **attribution**: credit `open-studs` and link back.
+
+- For source code: keep the copyright notice and MIT text in the files.
+- For physical prints or marketplace listings: a visible credit somewhere reasonable (product description, included card, etc.).
+
+Modifications you make can be released under whatever license you want, including closed/proprietary. The original `open-studs` work stays under these licenses for everyone, forever.

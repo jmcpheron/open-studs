@@ -1,0 +1,34 @@
+# OpenSCAD build outputs (we don't commit STL; we commit .scad and .3mf bundles)
+*.stl
+!presets/*.stl
+
+# Auto-generated render PNGs go under docs/assets/ and ARE committed there.
+# Everywhere else, ignore:
+/*.png
+/studs/*.png
+/latches/*.png
+/patterns/*.png
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.uv-cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Claude Code project-local state
+.claude/
+
+# Local OpenSCAD config dumps
+*.echo
+*.csg
