@@ -1,6 +1,8 @@
-# OpenSCAD build outputs (we don't commit STL; we commit .scad and .3mf bundles)
+# OpenSCAD build outputs — STLs are usually transient, but the configurator
+# preset STLs are tracked artifacts that the showcase viewer loads at runtime.
 *.stl
 !presets/*.stl
+!docs/configurator/stls/*.stl
 
 # Auto-generated render PNGs go under docs/assets/ and ARE committed there.
 # Everywhere else, ignore:
