@@ -58,6 +58,53 @@ The web viewer keeps the baked STL flat for printing and applies the wrist bend
 as a display transform only. That keeps the generated STL faithful to the print
 orientation while still showing how the design wears.
 
+## Configurator JSON
+
+The GitHub Pages configurator exports the same four-part structure as JSON:
+
+```json
+{
+  "schemaVersion": 1,
+  "band": {
+    "circumference": 180,
+    "width": 22,
+    "thickness": 3,
+    "corner": 4,
+    "flexRelief": "none",
+    "reliefPitch": 10,
+    "reliefWidth": 1.2
+  },
+  "surface": {
+    "mode": "integral",
+    "stud": "pyramid",
+    "pattern": "single_row",
+    "rows": 1,
+    "studSize": 6,
+    "tipRadius": 0.4,
+    "studSpacing": null
+  },
+  "latch": {
+    "type": "mushroom_keyhole",
+    "clearance": 25
+  },
+  "export": {
+    "stage": "print_flat",
+    "testLength": 70
+  }
+}
+```
+
+Build a downloaded config locally:
+
+```sh
+uv run studslab build-config configs/example_bracelet.json -o build/example_bracelet.stl
+```
+
+Or run the manual `build-config` GitHub Action against a committed JSON config
+path, such as `configs/example_bracelet.json`. The action writes the generated
+SCAD wrapper to `docs/configurator/generated/` and the STL to
+`docs/configurator/stls/`.
+
 ## SCAD Entry Points
 
 Hand-authored files can keep using the flat compatibility API:

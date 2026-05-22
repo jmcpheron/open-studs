@@ -1,0 +1,69 @@
+name: build-config
+
+on:
+  workflow_dispatch:
+    inputs:
+      config_path:
+        description: "Configurator JSON path in the repo"
+        required: true
+        default: "configs/example_bracelet.json"
+      output_name:
+        description: "Output file stem"
+        required: true
+        default: "custom_bracelet"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Install OpenSCAD
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openscad
+          openscad --version
+
+      - name: Build STL from config
+        run: |
+          mkdir -p docs/configurator/stls docs/configurator/generated
+          uv run studslab build-config \
+            "${{ inputs.config_path }}" \
+            -o "docs/configurator/stls/${{ inputs.output_name }}.stl" \
+            --scad-output "docs/configurator/generated/${{ inputs.output_name }}.scad"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/configurator/stls/ docs/configurator/generated/
+          if git diff --cached --quiet docs/configurator/stls/ docs/configurator/generated/; then
+            echo "No generated files changed."
+            exit 0
+          fi
+          git commit -m "ci: build configured bracelet [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            git pull --rebase origin main
+          done
+          exit 1

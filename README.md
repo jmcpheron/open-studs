@@ -8,7 +8,7 @@
 
 **Parametric, 3D-printable studded bracelets in TPU.** Punk-and-metal aesthetic, flexible like leather, open-source like it should be.
 
-**[→ See the bracelet bent around a wrist with your colors](https://jmcpheron.github.io/open-studs/configurator/)** — interactive showcase with a two-color filament-swap simulator. Three presets to pick from; layers map to a real filament-swap depth.
+**[→ Configure a bracelet in the browser](https://jmcpheron.github.io/open-studs/configurator/)** — adjust band size, stud style, surface mode, latch, and print stage; export JSON or SCAD for STL generation.
 
 Designed in OpenSCAD. Browse presets at [jmcpheron.github.io/open-studs](https://jmcpheron.github.io/open-studs). Clone the repo to add your own stud designs, latches, or take it somewhere new.
 
@@ -21,7 +21,7 @@ This repo follows the **[Shareable CAD](SHAREABLE-CAD.md)** pattern: OpenSCAD as
 A kit, not a single model. The band, the studs, the latches, and the placement patterns are all separate modules — mix and match to build the bracelet you want. Three ways to use it:
 
 - **Just want to print one?** Grab a preset from [Printables](#) or [MakerWorld](#).
-- **Want to customize?** Use the [web configurator](https://jmcpheron.github.io/open-studs) — the data model is split into band, surface, latch, and print-stage sections so it can grow into live STL generation.
+- **Want to customize?** Use the [web configurator](https://jmcpheron.github.io/open-studs/configurator/) — export JSON for `uv run studslab build-config` or SCAD for direct OpenSCAD builds.
 - **Want to design your own?** Clone the repo, edit the OpenSCAD source, PR a new stud or latch back. Contributor docs in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Stud modes

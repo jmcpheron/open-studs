@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "name": "example_bracelet",
+  "label": "Example Bracelet",
+  "band": {
+    "circumference": 180,
+    "width": 22,
+    "thickness": 3,
+    "corner": 4,
+    "flexRelief": "none",
+    "reliefPitch": 10,
+    "reliefWidth": 1.2
+  },
+  "surface": {
+    "mode": "integral",
+    "stud": "pyramid",
+    "pattern": "single_row",
+    "rows": 1,
+    "studSize": 6,
+    "tipRadius": 0.4,
+    "studSpacing": null
+  },
+  "latch": {
+    "type": "mushroom_keyhole",
+    "clearance": 25
+  },
+  "export": {
+    "stage": "print_flat",
+    "testLength": 70
+  },
+  "colors": {
+    "base": "#1a1a1a",
+    "top": "#cc1f1f"
+  }
+}

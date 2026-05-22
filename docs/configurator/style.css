@@ -31,8 +31,9 @@ aside.controls {
   position: fixed;
   top: 1.25rem;
   left: 1.25rem;
-  width: 320px;
+  width: 380px;
   max-width: calc(100vw - 2.5rem);
+  max-height: calc(100vh - 2.5rem);
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: 8px;
@@ -42,6 +43,8 @@ aside.controls {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   font-size: 14px;
   line-height: 1.5;
+  overflow: auto;
+  scrollbar-color: var(--text-dim) transparent;
 }
 
 aside.controls h1 {
@@ -81,6 +84,10 @@ aside.controls label {
   border-radius: 8px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
+}
+
+.segmented.tabs {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .segmented button {
@@ -131,9 +138,33 @@ aside.controls label {
   color: var(--text);
 }
 
+.config-panel {
+  display: none;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0 0;
+  border-top: 1px solid var(--panel-border);
+}
+
+.config-panel.active {
+  display: block;
+}
+
+.config-panel label {
+  margin-bottom: 0.75rem;
+}
+
+[data-value-for] {
+  float: right;
+  color: var(--text);
+  font-weight: 600;
+  text-transform: none;
+}
+
 aside.controls select,
 aside.controls input[type="color"],
-aside.controls input[type="range"] {
+aside.controls input[type="text"],
+aside.controls input[type="range"],
+aside.controls textarea {
   display: block;
   width: 100%;
   margin-top: 0.4rem;
@@ -156,6 +187,40 @@ aside.controls input[type="range"] {
   padding: 0;
   accent-color: var(--accent);
   height: 6px;
+}
+
+aside.controls textarea {
+  min-height: 180px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.actions button {
+  min-height: 34px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.actions button:first-child {
+  grid-column: 1 / -1;
+  background: rgba(255, 48, 80, 0.18);
+}
+
+.actions button:hover {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 aside.controls .hint {

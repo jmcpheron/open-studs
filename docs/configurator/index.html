@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>open-studs — configurator</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <link rel="icon" href="data:,">
   <!-- Import map so Three.js's addon modules can resolve "three" as a bare specifier -->
   <script type="importmap">
@@ -25,6 +25,123 @@
     <label>Preset
       <select id="preset"></select>
     </label>
+
+    <div class="control-group">
+      <span class="control-label">Edit</span>
+      <div class="segmented tabs" role="tablist" aria-label="Configuration section">
+        <button type="button" class="active" data-config-tab="band">Band</button>
+        <button type="button" data-config-tab="surface">Surface</button>
+        <button type="button" data-config-tab="latch">Latch</button>
+        <button type="button" data-config-tab="export">Export</button>
+      </div>
+    </div>
+
+    <section class="config-panel active" data-config-panel="band">
+      <label>Circumference <span data-value-for="circumference"></span>
+        <input type="range" id="band-circumference" min="140" max="230" value="180" step="1">
+      </label>
+      <label>Width <span data-value-for="width"></span>
+        <input type="range" id="band-width" min="12" max="38" value="22" step="1">
+      </label>
+      <label>Thickness <span data-value-for="thickness"></span>
+        <input type="range" id="band-thickness" min="2" max="6" value="3" step="0.2">
+      </label>
+      <label>Flex relief
+        <select id="band-flex-relief">
+          <option value="none">None</option>
+          <option value="inside_slots">Inside slots</option>
+          <option value="auto">Auto</option>
+        </select>
+      </label>
+      <label>Relief pitch <span data-value-for="reliefPitch"></span>
+        <input type="range" id="band-relief-pitch" min="6" max="18" value="10" step="0.5">
+      </label>
+      <label>Relief width <span data-value-for="reliefWidth"></span>
+        <input type="range" id="band-relief-width" min="0.8" max="3" value="1.2" step="0.1">
+      </label>
+    </section>
+
+    <section class="config-panel" data-config-panel="surface">
+      <label>Mode
+        <select id="surface-mode">
+          <option value="integral">Integral</option>
+          <option value="modular">Modular sockets</option>
+          <option value="bare_with_holes">Bare holes</option>
+        </select>
+      </label>
+      <label>Stud
+        <select id="surface-stud">
+          <option value="pyramid">Pyramid</option>
+          <option value="flat_pyramid">Flat pyramid</option>
+          <option value="dome">Dome</option>
+          <option value="cone_spike">Cone spike</option>
+          <option value="long_spike">Long spike</option>
+          <option value="diamond">Diamond</option>
+          <option value="screw_head">Screw head</option>
+          <option value="rivet">Rivet</option>
+          <option value="hex_bolt">Hex bolt</option>
+          <option value="washer">Washer</option>
+          <option value="star">Star</option>
+          <option value="heart">Heart</option>
+          <option value="lightning">Lightning</option>
+        </select>
+      </label>
+      <label>Pattern
+        <select id="surface-pattern">
+          <option value="single_row">Single row</option>
+          <option value="double_row">Double row</option>
+          <option value="staggered">Staggered</option>
+        </select>
+      </label>
+      <label>Rows <span data-value-for="rows"></span>
+        <input type="range" id="surface-rows" min="1" max="3" value="1" step="1">
+      </label>
+      <label>Stud size <span data-value-for="studSize"></span>
+        <input type="range" id="surface-stud-size" min="4" max="12" value="6" step="0.5">
+      </label>
+      <label>Tip radius <span data-value-for="tipRadius"></span>
+        <input type="range" id="surface-tip-radius" min="0" max="1.2" value="0.4" step="0.1">
+      </label>
+      <label>Spacing <span data-value-for="studSpacing"></span>
+        <input type="range" id="surface-stud-spacing" min="0" max="24" value="0" step="1">
+      </label>
+    </section>
+
+    <section class="config-panel" data-config-panel="latch">
+      <label>Latch
+        <select id="latch-type">
+          <option value="buckle">Buckle</option>
+          <option value="snap">Snap</option>
+          <option value="loop_post">Loop post</option>
+          <option value="mushroom_keyhole">Mushroom keyhole</option>
+          <option value="ladder_strap">Ladder strap</option>
+          <option value="loop_post_v2">Loop post v2</option>
+          <option value="friction_overlap">Friction overlap</option>
+          <option value="magnetic">Magnetic</option>
+          <option value="none">None</option>
+        </select>
+      </label>
+      <label>Clearance <span data-value-for="clearance"></span>
+        <input type="range" id="latch-clearance" min="8" max="36" value="25" step="1">
+      </label>
+    </section>
+
+    <section class="config-panel" data-config-panel="export">
+      <label>Name
+        <input type="text" id="config-name" value="custom_bracelet" autocomplete="off">
+      </label>
+      <label>Stage
+        <select id="export-stage">
+          <option value="print_flat">Print flat</option>
+          <option value="band_only">Band only</option>
+          <option value="surface_only">Surface only</option>
+          <option value="latch_only">Latch only</option>
+        </select>
+      </label>
+      <label>Test length <span data-value-for="testLength"></span>
+        <input type="range" id="export-test-length" min="50" max="110" value="70" step="1">
+      </label>
+    </section>
 
     <div class="control-group">
       <span class="control-label">View</span>
@@ -61,6 +178,16 @@
       <input type="range" id="swap-layer" min="0" max="15" value="7" step="1">
     </label>
 
+    <div class="actions">
+      <button type="button" id="generate-source">Generate Source</button>
+      <button type="button" id="download-json">Download JSON</button>
+      <button type="button" id="download-scad">Download SCAD</button>
+    </div>
+
+    <label>SCAD
+      <textarea id="source-output" readonly spellcheck="false"></textarea>
+    </label>
+
     <p class="caption" id="preset-caption">Loading…</p>
     <p class="caption">
       <a href="../">← back to open-studs</a> ·
@@ -68,6 +195,6 @@
     </p>
   </aside>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

@@ -72,6 +72,7 @@ The two packages are the *lab* — small CLIs that demonstrate "processing param
 | `studslab inspect <scad>` | Parse the top-level parameters of a `.scad` file and print a table. Pure-Python, no OpenSCAD CLI dep. |
 | `studslab render <scad>` | Shell out to `openscad` to produce a PNG (iso / top / side angles). |
 | `studslab build <scad>` | Shell out to `openscad -o out.stl in.scad`. |
+| `studslab build-config <json>` | Convert a configurator JSON export to a temporary SCAD wrapper and build an STL. |
 | `studslab explode <scad>` | For modular mode: render the band, each stud variant, and the latch as separate STLs. |
 | `studslab spin <scad>` | Renders a rotating GIF — bracelet on a turntable, frames stitched by Pillow. |
 
