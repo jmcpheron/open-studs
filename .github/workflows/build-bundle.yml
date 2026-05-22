@@ -1,0 +1,58 @@
+name: build-bundle
+
+# Regenerates docs/configurator/bracelet_bundled.scad when the OpenSCAD source
+# tree changes. The configurator's "Download SCAD" prepends this bundle to the
+# user's config so the downloaded file renders in OpenSCAD without the rest of
+# the repo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bracelet.scad"
+      - "core/**"
+      - "studs/**"
+      - "latches/**"
+      - "patterns/**"
+      - "scripts/bundle_scad.py"
+      - ".github/workflows/build-bundle.yml"
+
+concurrency:
+  group: build-bundle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Regenerate SCAD bundle
+        run: python3 scripts/bundle_scad.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/configurator/bracelet_bundled.scad
+          if git diff --cached --quiet docs/configurator/bracelet_bundled.scad; then
+            echo "Bundle unchanged."
+            exit 0
+          fi
+          git commit -m "ci: regenerate SCAD bundle [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            echo "Push rejected on attempt $attempt; rebasing on origin/main."
+            git pull --rebase origin main
+          done
+          echo "Failed to push after 5 attempts."
+          exit 1
