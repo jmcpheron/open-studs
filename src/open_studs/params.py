@@ -18,6 +18,11 @@ BAND_DEFAULT_WIDTH         = 22
 BAND_DEFAULT_THICKNESS     = 3
 BAND_CORNER_RADIUS         = 4
 LATCH_MARGIN               = 25    # mm reserved at each end for latch hardware
+BAND_FLEX_RELIEF_DEFAULT       = "none"
+BAND_RELIEF_PITCH              = 10
+BAND_RELIEF_WIDTH              = 1.2
+BAND_RELIEF_EDGE_MARGIN        = 2
+BAND_RELIEF_AUTO_MIN_THICKNESS = 3.6
 
 # --- sizing reference -------------------------------------------------------
 # Circumference ranges by wrist size, in mm. From README.md.
@@ -33,6 +38,9 @@ SIZING = {
 STUD_DEFAULT_SIZE        = 6     # base width/diameter
 STUD_DEFAULT_TIP_RADIUS  = 0.4   # safety-rounded; set to 0 for sharp
 STUD_DEFAULT_ROWS        = 1
+SURFACE_DEFAULT_MODE     = "integral"
+SURFACE_SOCKET_DEPTH     = 1.5
+SURFACE_HOLE_DIAMETER    = 3
 
 # Per-stud height multipliers (relative to STUD_DEFAULT_SIZE).
 STUD_HEIGHT_MULTIPLIERS = {

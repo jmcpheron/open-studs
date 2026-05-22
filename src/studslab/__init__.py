@@ -7,7 +7,8 @@ Five commands planned (per SHAREABLE-CAD.md):
     explode   — render band + each stud + latch separately
     spin      — render a rotating-turntable GIF
 
-Push 1 ships `inspect`. The remaining four ship as the project matures.
+`inspect` and `build` are implemented. The remaining commands ship as the
+project matures.
 """
 
 __version__ = "0.1.0"

@@ -10,9 +10,11 @@ on:
     branches: [main]
     paths:
       - "*.scad"
+      - "core/**"
       - "studs/**"
       - "latches/**"
       - "patterns/**"
+      - "test_prints/**"
       - ".github/workflows/build-scad.yml"
 
 concurrency:

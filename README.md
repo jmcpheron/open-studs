@@ -21,7 +21,7 @@ This repo follows the **[Shareable CAD](SHAREABLE-CAD.md)** pattern: OpenSCAD as
 A kit, not a single model. The band, the studs, the latches, and the placement patterns are all separate modules — mix and match to build the bracelet you want. Three ways to use it:
 
 - **Just want to print one?** Grab a preset from [Printables](#) or [MakerWorld](#).
-- **Want to customize?** Use the [web configurator](https://jmcpheron.github.io/open-studs) — pick band size, stud type, pattern, latch, and download an STL.
+- **Want to customize?** Use the [web configurator](https://jmcpheron.github.io/open-studs) — the data model is split into band, surface, latch, and print-stage sections so it can grow into live STL generation.
 - **Want to design your own?** Clone the repo, edit the OpenSCAD source, PR a new stud or latch back. Contributor docs in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Stud modes
@@ -56,7 +56,7 @@ Different tradeoffs — none is universally best:
 
 ## Sizing
 
-**Print a test strip before committing to a full bracelet.** TPU stretch varies by brand and infill, and wrist sizes vary more than you'd think. The repo includes a `sizing_test.scad` that prints a short calibration band — measure your wrist, print the strip, confirm fit, then print the real thing.
+**Print a test strip before committing to a full bracelet.** TPU stretch varies by brand and infill, and wrist sizes vary more than you'd think. The repo includes `sizing_test.scad` plus focused coupons under `test_prints/` for flex relief, surface attachment, and latch fit.
 
 Rough guide:
 - Kid: 140–160mm circumference
@@ -77,7 +77,8 @@ Rough guide:
 
 ```
 open-studs/
-├── bracelet.scad           # the band itself
+├── bracelet.scad           # public assembly entry point
+├── core/                   # band, surface, latch, and config assembly layers
 ├── sizing_test.scad        # calibration strip — print this first
 ├── studs/                  # one file per stud design
 │   ├── pyramid.scad
@@ -100,10 +101,10 @@ open-studs/
 │   ├── cluster.scad
 │   └── gradient_size.scad
 ├── presets/                # ready-to-print hero configurations
-│   ├── classic_spiked.3mf
-│   ├── festival_wide.3mf
-│   ├── subtle_daily.3mf
-│   └── ...
+│   ├── classic_spiked.scad
+│   ├── festival_wide.scad
+│   └── subtle_daily.scad
+├── test_prints/            # focused fit and attachment coupons
 ├── docs/                   # configurator (GitHub Pages)
 └── gallery/                # printed examples
 ```
@@ -111,10 +112,7 @@ open-studs/
 ## Quick start (OpenSCAD)
 
 ```scad
-include <bracelet.scad>
-include <studs/long_spike.scad>
-include <latches/buckle.scad>
-include <patterns/staggered.scad>
+use <bracelet.scad>
 
 studded_bracelet(
     circumference = 180,
@@ -131,6 +129,7 @@ studded_bracelet(
 ## Contributing
 
 The whole point is that you can add your own studs and latches and PR them back. See [CONTRIBUTING.md](CONTRIBUTING.md) — there's a template stud file, a shared module signature every stud must implement, and a checklist for getting your design merged.
+The current band/surface/latch/export split is documented in [docs/design-architecture.md](docs/design-architecture.md).
 
 Particularly looking for:
 - New stud designs (especially anything that captures a specific subculture — goth, festival, cyberpunk, kawaii, etc.)

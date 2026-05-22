@@ -1,188 +1,170 @@
 // open-studs — parametric studded bracelet, source-of-truth.
 // MIT licensed. See LICENSE-MIT.
 //
-// Top-level entry point: studded_bracelet(...).
-// The band is printed flat (a flat strip); TPU flex makes it wrap a wrist.
+// Top-level entry points:
+//   - studded_bracelet(...): flat, hand-editable compatibility API.
+//   - bracelet_from_config(...): segmented band/surface/latch/export API.
 //
-// Quick start (matches README.md verbatim):
+// The bracelet is exported flat for printing. The GitHub Pages viewer can
+// bend that same STL around a wrist for preview without changing the print
+// orientation.
 //
-//   include <bracelet.scad>
+// Quick start:
+//
+//   use <bracelet.scad>
 //   studded_bracelet(
 //       circumference = 180, width = 22, thickness = 3,
 //       stud_module = "long_spike", stud_pattern = "staggered",
 //       stud_rows = 2, latch = "buckle", mode = "integral"
 //   );
 
-use <studs/pyramid.scad>
-use <studs/dome.scad>
-use <studs/cone_spike.scad>
-use <studs/long_spike.scad>
-use <studs/diamond.scad>
-use <studs/flat_pyramid.scad>
-use <studs/screw_head.scad>
-use <studs/rivet.scad>
-use <studs/hex_bolt.scad>
-use <studs/washer.scad>
-use <studs/star.scad>
-use <studs/heart.scad>
-use <studs/lightning.scad>
+include <core/config.scad>
 
-use <latches/buckle.scad>
-use <latches/snap.scad>
-use <latches/loop_post.scad>
-use <latches/friction_overlap.scad>
-use <latches/magnetic.scad>
+use <core/band.scad>
+use <core/surface.scad>
+use <core/latch.scad>
 
-use <patterns/single_row.scad>
-use <patterns/double_row.scad>
-use <patterns/staggered.scad>
-use <patterns/cluster.scad>
-use <patterns/gradient_size.scad>
+$fn = OPEN_STUDS_FN;
 
-$fn = 48;
+// Compatibility constant for older user files and pattern discussions.
+LATCH_MARGIN = OPEN_STUDS_LATCH_MARGIN;
 
-LATCH_MARGIN = 25;  // mm reserved at each end for latch hardware
+// --- assembly stages -------------------------------------------------------
 
-// --- band geometry ---------------------------------------------------------
+module bracelet_from_config(
+    band    = band_config(),
+    surface = surface_config(),
+    latch   = latch_config(),
+    export  = export_config()
+) {
+    stage = export_cfg_stage(export);
 
-module band_strip(length, width, thickness, corner = 4) {
-    linear_extrude(height = thickness)
-        offset(r = corner) offset(delta = -corner)
-            square([length, width], center = false);
-}
-
-// --- dispatch helpers ------------------------------------------------------
-// OpenSCAD has no dynamic dispatch; we route by string. Adding a new stud
-// means one new file under studs/ AND one new branch here.
-
-module place_stud(name, size, tip_radius) {
-    if      (name == "pyramid")       stud_pyramid(size, tip_radius);
-    else if (name == "dome")          stud_dome(size, tip_radius);
-    else if (name == "cone_spike")    stud_cone_spike(size, tip_radius);
-    else if (name == "long_spike")    stud_long_spike(size, tip_radius);
-    else if (name == "diamond")       stud_diamond(size, tip_radius);
-    else if (name == "flat_pyramid")  stud_flat_pyramid(size, tip_radius);
-    else if (name == "screw_head")    stud_screw_head(size, tip_radius);
-    else if (name == "rivet")         stud_rivet(size, tip_radius);
-    else if (name == "hex_bolt")      stud_hex_bolt(size, tip_radius);
-    else if (name == "washer")        stud_washer(size, tip_radius);
-    else if (name == "star")          stud_star(size, tip_radius);
-    else if (name == "heart")         stud_heart(size, tip_radius);
-    else if (name == "lightning")     stud_lightning(size, tip_radius);
-    else echo(str("WARN: unknown stud_module '", name, "'"));
-}
-
-// Latch dispatch: each latch defines left and right halves relative to its
-// own origin (left extends -X, right extends +X). The caller places the
-// left invocation at the band's left end (x=0) and translates the right
-// invocation to band_length. No mirror — the latch already knows which side
-// is which.
-
-module place_latch(name, band_width, band_thickness, band_length) {
-    if      (name == "buckle")            _place_two_ended(name, band_width, band_thickness, band_length);
-    else if (name == "snap")              _place_two_ended(name, band_width, band_thickness, band_length);
-    else if (name == "loop_post")         _place_two_ended(name, band_width, band_thickness, band_length);
-    else if (name == "friction_overlap")  _place_two_ended(name, band_width, band_thickness, band_length);
-    else if (name == "magnetic")          _place_two_ended(name, band_width, band_thickness, band_length);
-    else if (name == "none") { /* no latch */ }
-    else echo(str("WARN: unknown latch '", name, "'"));
-}
-
-module _place_two_ended(name, band_width, band_thickness, band_length) {
-    if      (name == "buckle") {
-        latch_buckle(band_width, band_thickness, end = "left");
-        translate([band_length, 0, 0]) latch_buckle(band_width, band_thickness, end = "right");
-    }
-    else if (name == "snap") {
-        latch_snap(band_width, band_thickness, end = "left");
-        translate([band_length, 0, 0]) latch_snap(band_width, band_thickness, end = "right");
-    }
-    else if (name == "loop_post") {
-        latch_loop_post(band_width, band_thickness, end = "left");
-        translate([band_length, 0, 0]) latch_loop_post(band_width, band_thickness, end = "right");
-    }
-    else if (name == "friction_overlap") {
-        latch_friction_overlap(band_width, band_thickness);
-    }
-    else if (name == "magnetic") {
-        latch_magnetic(band_width, band_thickness, end = "left");
-        translate([band_length, 0, 0]) latch_magnetic(band_width, band_thickness, end = "right");
+    if (stage == "print_flat") {
+        _bracelet_print_flat(band, surface, latch);
+    } else if (stage == "band_only") {
+        bracelet_band_from_config(band);
+    } else if (stage == "surface_only") {
+        _bracelet_surface_only(band, surface, latch);
+    } else if (stage == "latch_only") {
+        _bracelet_latch_test(band, latch, export);
+    } else {
+        echo(str(
+            "WARN: unknown export stage '", stage,
+            "'; valid: print_flat, band_only, surface_only, latch_only"
+        ));
+        _bracelet_print_flat(band, surface, latch);
     }
 }
 
-function pattern_positions(name, band_length, band_width, rows, spacing) =
-      name == "single_row"    ? pattern_single_row(band_length, band_width, rows, spacing)
-    : name == "double_row"    ? pattern_double_row(band_length, band_width, rows, spacing)
-    : name == "staggered"     ? pattern_staggered(band_length, band_width, rows, spacing)
-    : name == "cluster"       ? pattern_cluster(band_length, band_width, rows, spacing)
-    : name == "gradient_size" ? pattern_gradient_size(band_length, band_width, rows, spacing)
-    : [];
+module _bracelet_print_flat(band, surface, latch) {
+    difference() {
+        union() {
+            bracelet_band_from_config(band);
+            bracelet_surface_from_config(surface, band, latch);
+            bracelet_latch_from_config(latch, band);
+        }
 
-// --- main module -----------------------------------------------------------
+        bracelet_surface_cutouts_from_config(surface, band, latch);
+    }
+}
+
+module _bracelet_surface_only(band, surface, latch) {
+    difference() {
+        union() {
+            bracelet_band_from_config(band);
+            bracelet_surface_from_config(surface, band, latch);
+        }
+
+        bracelet_surface_cutouts_from_config(surface, band, latch);
+    }
+}
+
+module _bracelet_latch_test(band, latch, export) {
+    test_band = band_config(
+        circumference      = export_cfg_test_length(export),
+        width              = band_cfg_width(band),
+        thickness          = band_cfg_thickness(band),
+        corner             = band_cfg_corner(band),
+        flex_relief        = "none",
+        relief_margin      = latch_cfg_clearance(latch)
+    );
+
+    union() {
+        bracelet_band_from_config(test_band);
+        bracelet_latch_from_config(latch, test_band);
+    }
+}
+
+// --- public compatibility API ---------------------------------------------
 
 module studded_bracelet(
-    circumference = 180,
-    width         = 22,
-    thickness     = 3,
-    stud_module   = "pyramid",
-    stud_pattern  = "single_row",
-    stud_rows     = 1,
-    stud_size     = 6,
-    tip_radius    = 0.4,
-    stud_spacing  = undef,
-    latch         = "buckle",
-    mode          = "integral"
+    circumference      = OPEN_STUDS_DEFAULT_CIRCUMFERENCE,
+    width              = OPEN_STUDS_DEFAULT_WIDTH,
+    thickness          = OPEN_STUDS_DEFAULT_THICKNESS,
+    stud_module        = OPEN_STUDS_DEFAULT_STUD,
+    stud_pattern       = OPEN_STUDS_DEFAULT_PATTERN,
+    stud_rows          = OPEN_STUDS_DEFAULT_ROWS,
+    stud_size          = OPEN_STUDS_DEFAULT_STUD_SIZE,
+    tip_radius         = OPEN_STUDS_DEFAULT_TIP_RADIUS,
+    stud_spacing       = undef,
+    latch              = "buckle",
+    mode               = "integral",
+    flex_relief        = "none",
+    relief_pitch       = 10,
+    relief_width       = 1.2,
+    relief_depth       = undef,
+    latch_clearance    = OPEN_STUDS_LATCH_MARGIN,
+    stage              = "print_flat",
+    test_length        = 70
 ) {
-    band_length = circumference;
-    positions = pattern_positions(stud_pattern, band_length, width, stud_rows, stud_spacing);
+    band_cfg = band_config(
+        circumference = circumference,
+        width         = width,
+        thickness     = thickness,
+        flex_relief   = flex_relief,
+        relief_pitch  = relief_pitch,
+        relief_width  = relief_width,
+        relief_depth  = relief_depth,
+        relief_margin = latch_clearance
+    );
 
-    if (mode == "integral") {
-        union() {
-            band_strip(band_length, width, thickness);
-            for (p = positions)
-                if (p[0] > LATCH_MARGIN && p[0] < band_length - LATCH_MARGIN)
-                    translate([p[0], p[1], thickness])
-                        place_stud(stud_module, stud_size, tip_radius);
-            place_latch(latch, width, thickness, band_length);
-        }
-    } else if (mode == "modular") {
-        difference() {
-            union() {
-                band_strip(band_length, width, thickness);
-                place_latch(latch, width, thickness, band_length);
-            }
-            // friction-fit sockets for modular studs (printed separately)
-            for (p = positions)
-                if (p[0] > LATCH_MARGIN && p[0] < band_length - LATCH_MARGIN)
-                    translate([p[0], p[1], thickness - 1.5])
-                        cylinder(h = 1.6, d = stud_size * 0.5);
-        }
-    } else if (mode == "bare_with_holes") {
-        difference() {
-            union() {
-                band_strip(band_length, width, thickness);
-                place_latch(latch, width, thickness, band_length);
-            }
-            for (p = positions)
-                if (p[0] > LATCH_MARGIN && p[0] < band_length - LATCH_MARGIN)
-                    translate([p[0], p[1], -0.1])
-                        cylinder(h = thickness + 0.2, d = 3);
-        }
-    } else {
-        echo(str("WARN: unknown mode '", mode, "'; valid: integral, modular, bare_with_holes"));
-        band_strip(band_length, width, thickness);
-    }
+    surface_cfg = surface_config(
+        mode         = mode,
+        stud_module  = stud_module,
+        stud_pattern = stud_pattern,
+        stud_rows    = stud_rows,
+        stud_size    = stud_size,
+        tip_radius   = tip_radius,
+        stud_spacing = stud_spacing
+    );
+
+    latch_cfg = latch_config(
+        type      = latch,
+        clearance = latch_clearance
+    );
+
+    export_cfg = export_config(
+        stage       = stage,
+        test_length = test_length
+    );
+
+    bracelet_from_config(
+        band    = band_cfg,
+        surface = surface_cfg,
+        latch   = latch_cfg,
+        export  = export_cfg
+    );
 }
 
 // --- default render --------------------------------------------------------
 
 studded_bracelet(
-    circumference = 180,
-    width         = 22,
-    thickness     = 3,
-    stud_module   = "pyramid",
-    stud_pattern  = "single_row",
-    stud_rows     = 1,
+    circumference = OPEN_STUDS_DEFAULT_CIRCUMFERENCE,
+    width         = OPEN_STUDS_DEFAULT_WIDTH,
+    thickness     = OPEN_STUDS_DEFAULT_THICKNESS,
+    stud_module   = OPEN_STUDS_DEFAULT_STUD,
+    stud_pattern  = OPEN_STUDS_DEFAULT_PATTERN,
+    stud_rows     = OPEN_STUDS_DEFAULT_ROWS,
     latch         = "buckle",
     mode          = "integral"
 );

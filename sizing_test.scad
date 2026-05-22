@@ -10,6 +10,7 @@
 use <studs/pyramid.scad>
 use <studs/dome.scad>
 use <studs/cone_spike.scad>
+use <core/band.scad>
 
 $fn = 48;
 
@@ -17,15 +18,9 @@ strip_length = 50;   // mm — short enough to be a quick print
 width        = 22;   // mm
 thickness    = 3;    // mm
 
-module band_strip(length, width, thickness, corner = 4) {
-    linear_extrude(height = thickness)
-        offset(r = corner) offset(delta = -corner)
-            square([length, width], center = false);
-}
-
 module sizing_test() {
     union() {
-        band_strip(strip_length, width, thickness);
+        bracelet_band(strip_length, width, thickness);
 
         // three reference studs spaced evenly
         translate([strip_length * 0.25, width / 2, thickness])

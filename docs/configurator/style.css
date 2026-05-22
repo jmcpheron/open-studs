@@ -35,7 +35,7 @@ aside.controls {
   max-width: calc(100vw - 2.5rem);
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 1.25rem 1.5rem;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -47,14 +47,8 @@ aside.controls {
 aside.controls h1 {
   margin: 0 0 0.25rem 0;
   font-size: 1.4rem;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   font-weight: 700;
-}
-
-aside.controls .tagline {
-  margin: 0 0 1.25rem 0;
-  color: var(--text-dim);
-  font-size: 13px;
 }
 
 aside.controls label {
@@ -63,8 +57,78 @@ aside.controls label {
   color: var(--text-dim);
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   font-weight: 600;
+}
+
+.control-group {
+  margin: 0 0 1rem 0;
+}
+
+.control-label {
+  display: block;
+  margin: 0 0 0.4rem 0;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.segmented button {
+  height: 34px;
+  border: 0;
+  border-right: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--text-dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.segmented button:last-child {
+  border-right: 0;
+}
+
+.segmented button.active {
+  background: rgba(255, 48, 80, 0.18);
+  color: var(--text);
+}
+
+.config-summary {
+  margin: 0 0 1rem 0;
+  padding: 0;
+}
+
+.config-summary div {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--panel-border);
+}
+
+.config-summary dt,
+.config-summary dd {
+  margin: 0;
+  font-size: 12px;
+}
+
+.config-summary dt {
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.config-summary dd {
+  color: var(--text);
 }
 
 aside.controls select,
@@ -109,7 +173,6 @@ aside.controls .caption {
   color: var(--text-dim);
   font-size: 12px;
   text-transform: none;
-  letter-spacing: 0;
 }
 
 aside.controls a {
@@ -124,4 +187,30 @@ aside.controls a:hover {
 .swap-display {
   color: var(--text);
   font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  html, body {
+    overflow: hidden;
+  }
+
+  aside.controls {
+    top: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+    max-width: none;
+    max-height: 46vh;
+    padding: 1rem;
+    overflow: auto;
+  }
+
+  aside.controls h1 {
+    font-size: 1.2rem;
+  }
+
+  .config-summary div {
+    grid-template-columns: 64px 1fr;
+  }
 }

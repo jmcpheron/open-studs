@@ -1,5 +1,4 @@
-// open-studs configurator — Three.js viewer with vertex-shader bending and
-// two-color layer-swap simulator.
+// open-studs configurator — static Three.js viewer for baked OpenSCAD STLs.
 //
 // Coordinate convention follows the OpenSCAD source:
 //   X = band length        (0 to circumference)
@@ -15,6 +14,7 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
 const LAYER_HEIGHT = 0.2;  // mm per print layer
+const VIEW_X_OFFSET = 24;  // keeps the model clear of the control panel
 
 // --- DOM hooks --------------------------------------------------------------
 
@@ -25,6 +25,10 @@ const colorTopEl = document.getElementById('color-top');
 const swapLayerEl = document.getElementById('swap-layer');
 const swapLayerDisplay = document.getElementById('swap-layer-display');
 const presetCaption = document.getElementById('preset-caption');
+const stageButtons = [...document.querySelectorAll('[data-view-stage]')];
+const summaryBand = document.getElementById('summary-band');
+const summarySurface = document.getElementById('summary-surface');
+const summaryLatch = document.getElementById('summary-latch');
 
 // --- Three.js scene ---------------------------------------------------------
 
@@ -54,6 +58,7 @@ const uniforms = {
   uWristR:    { value: 180 / (2 * Math.PI) },  // inner radius matches preset circumference
   uBandWidth: { value: 22 },
   uSwapZ:     { value: 7 * LAYER_HEIGHT },
+  uViewStage: { value: 1.0 },
   uColorBase: { value: new THREE.Color(0x1a1a1a) },
   uColorTop:  { value: new THREE.Color(0xcc1f1f) },
 };
@@ -62,6 +67,7 @@ const vertexShader = /* glsl */ `
   uniform float uCircum;
   uniform float uWristR;
   uniform float uBandWidth;
+  uniform float uViewStage;
 
   varying float vFlatZ;
   varying vec3 vBentNormal;
@@ -73,6 +79,12 @@ const vertexShader = /* glsl */ `
     float halfCirc = uCircum * 0.5;
     float angle = (position.x - halfCirc) / uCircum * 6.28318530718;
     float r = uWristR + position.z;
+
+    vec3 flatPos = vec3(
+      position.x - halfCirc,
+      position.y - uBandWidth * 0.5,
+      position.z
+    );
 
     vec3 bent = vec3(
       r * sin(angle),
@@ -86,9 +98,10 @@ const vertexShader = /* glsl */ `
        0.0,        1.0,  0.0,
        sin(angle), 0.0,  cos(angle)
     );
-    vBentNormal = normalize(bendRot * normal);
+    vec3 bentNormal = normalize(bendRot * normal);
+    vBentNormal = normalize(mix(normal, bentNormal, uViewStage));
 
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(bent, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(mix(flatPos, bent, uViewStage), 1.0);
   }
 `;
 
@@ -126,6 +139,92 @@ const material = new THREE.ShaderMaterial({
 const loader = new STLLoader();
 let mesh = null;
 let presets = [];
+let viewStage = 'wrist';
+
+function presetBand(preset) {
+  return preset.band ?? {
+    circumference: preset.circumference,
+    width: preset.width,
+    thickness: preset.thickness,
+    corner: 4,
+    flexRelief: 'none',
+  };
+}
+
+function presetSurface(preset) {
+  return preset.surface ?? {
+    mode: preset.mode ?? 'integral',
+    stud: preset.stud_module ?? preset.stud ?? 'pyramid',
+    pattern: preset.stud_pattern ?? preset.pattern ?? 'single_row',
+    rows: preset.stud_rows ?? preset.rows ?? 1,
+    studSize: preset.stud_size ?? preset.studSize ?? 6,
+    tipRadius: preset.tip_radius ?? preset.tipRadius ?? 0.4,
+  };
+}
+
+function presetLatch(preset) {
+  return preset.latch && typeof preset.latch === 'object'
+    ? preset.latch
+    : { type: preset.latch ?? 'buckle', clearance: 25 };
+}
+
+function presetExport(preset) {
+  return preset.export ?? {
+    stage: 'print_flat',
+    stl: preset.stl,
+  };
+}
+
+function presetColors(preset) {
+  return preset.colors ?? {
+    base: preset.colorBase,
+    top: preset.colorTop,
+  };
+}
+
+function labelize(value) {
+  return String(value).replaceAll('_', ' ');
+}
+
+function isCompactViewport() {
+  return window.innerWidth < 700;
+}
+
+function positionMesh() {
+  if (!mesh) return;
+  mesh.position.x = isCompactViewport() ? 0 : VIEW_X_OFFSET;
+  mesh.position.y = isCompactViewport() ? 48 : 0;
+}
+
+function updateSummary(preset) {
+  const band = presetBand(preset);
+  const surface = presetSurface(preset);
+  const latch = presetLatch(preset);
+
+  summaryBand.textContent =
+    `${band.circumference} x ${band.width} x ${band.thickness} mm` +
+    (band.flexRelief && band.flexRelief !== 'none' ? `, ${labelize(band.flexRelief)}` : '');
+  summarySurface.textContent =
+    `${labelize(surface.stud)} / ${labelize(surface.pattern)} / ${surface.rows} row${surface.rows === 1 ? '' : 's'}`;
+  summaryLatch.textContent = labelize(latch.type);
+}
+
+function setViewStage(stage) {
+  viewStage = stage;
+  uniforms.uViewStage.value = stage === 'flat' ? 0.0 : 1.0;
+
+  for (const button of stageButtons) {
+    button.classList.toggle('active', button.dataset.viewStage === stage);
+  }
+
+  if (stage === 'flat') {
+    camera.position.set(0, -90, isCompactViewport() ? 360 : 270);
+  } else {
+    camera.position.set(0, 36, isCompactViewport() ? 260 : 180);
+  }
+  camera.lookAt(0, 0, 0);
+  positionMesh();
+}
 
 async function loadPresets() {
   const res = await fetch('presets.json');
@@ -144,18 +243,23 @@ async function selectPreset(name) {
   const preset = presets.find(p => p.name === name);
   if (!preset) return;
 
-  presetCaption.textContent = preset.caption || '';
-  colorBaseEl.value = preset.colorBase;
-  colorTopEl.value = preset.colorTop;
+  const band = presetBand(preset);
+  const exportCfg = presetExport(preset);
+  const colors = presetColors(preset);
 
-  uniforms.uCircum.value = preset.circumference;
-  uniforms.uWristR.value = preset.circumference / (2 * Math.PI);
-  uniforms.uBandWidth.value = preset.width;
-  uniforms.uColorBase.value.set(preset.colorBase);
-  uniforms.uColorTop.value.set(preset.colorTop);
+  presetCaption.textContent = preset.caption || '';
+  updateSummary(preset);
+  colorBaseEl.value = colors.base;
+  colorTopEl.value = colors.top;
+
+  uniforms.uCircum.value = band.circumference;
+  uniforms.uWristR.value = band.circumference / (2 * Math.PI);
+  uniforms.uBandWidth.value = band.width;
+  uniforms.uColorBase.value.set(colors.base);
+  uniforms.uColorTop.value.set(colors.top);
 
   // re-cap the layer slider to this preset's thickness
-  const maxLayers = Math.round(preset.thickness / LAYER_HEIGHT);
+  const maxLayers = Math.round(band.thickness / LAYER_HEIGHT);
   swapLayerEl.max = maxLayers;
   const defaultLayer = Math.round(maxLayers * 0.5);
   swapLayerEl.value = defaultLayer;
@@ -165,7 +269,7 @@ async function selectPreset(name) {
   // load STL
   try {
     const geometry = await new Promise((resolve, reject) => {
-      loader.load(preset.stl, resolve, undefined, reject);
+      loader.load(exportCfg.stl, resolve, undefined, reject);
     });
     if (!geometry.attributes.normal) geometry.computeVertexNormals();
 
@@ -174,9 +278,11 @@ async function selectPreset(name) {
       mesh.geometry.dispose();
     }
     mesh = new THREE.Mesh(geometry, material);
+    positionMesh();
+    mesh.frustumCulled = false;
     scene.add(mesh);
   } catch (err) {
-    console.error(`Failed to load STL ${preset.stl}:`, err);
+    console.error(`Failed to load STL ${exportCfg.stl}:`, err);
     presetCaption.textContent =
       `STL not yet rendered for "${preset.label}". CI bakes presets on push; check back in a minute.`;
   }
@@ -185,6 +291,10 @@ async function selectPreset(name) {
 // --- UI handlers ------------------------------------------------------------
 
 presetSel.addEventListener('change', e => selectPreset(e.target.value));
+
+for (const button of stageButtons) {
+  button.addEventListener('click', () => setViewStage(button.dataset.viewStage));
+}
 
 colorBaseEl.addEventListener('input', e => {
   uniforms.uColorBase.value.set(e.target.value);
@@ -204,15 +314,21 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  setViewStage(viewStage);
 });
 
 // --- animation loop ---------------------------------------------------------
 
 function animate() {
   requestAnimationFrame(animate);
-  if (mesh) mesh.rotation.y += 0.005;
+  if (mesh && viewStage === 'wrist') {
+    mesh.rotation.y += 0.005;
+  } else if (mesh) {
+    mesh.rotation.set(0, 0, 0);
+  }
   renderer.render(scene, camera);
 }
 
 loadPresets();
+setViewStage(viewStage);
 animate();

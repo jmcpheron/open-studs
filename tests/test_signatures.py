@@ -1,12 +1,13 @@
 """Every .scad file under studs/, latches/, patterns/ must implement the
 module/function signature contract documented in CONTRIBUTING.md.
 
-The contract:
+The contribution contract:
     studs/<name>.scad     → module stud_<name>(size, tip_radius, height)
     latches/<name>.scad   → module latch_<name>(band_width, band_thickness, end)
     patterns/<name>.scad  → function pattern_<name>(band_length, band_width, rows, spacing)
 
 A contribution that doesn't match here fails CI before it can be merged.
+The dispatch registry may live in bracelet.scad or core/*.scad.
 """
 
 from __future__ import annotations
@@ -25,6 +26,11 @@ PATTERN_FUNCTION_RE = re.compile(r"^\s*function\s+pattern_(\w+)\s*\(", re.MULTIL
 
 def _scad_files(subdir: str) -> list[Path]:
     return sorted((REPO_ROOT / subdir).glob("*.scad"))
+
+
+def _assembly_registry_text() -> str:
+    paths = [REPO_ROOT / "bracelet.scad", *sorted((REPO_ROOT / "core").glob("*.scad"))]
+    return "\n".join(path.read_text() for path in paths if path.exists())
 
 
 @pytest.mark.parametrize("scad", _scad_files("studs"), ids=lambda p: p.name)
@@ -61,30 +67,30 @@ def test_pattern_signature(scad: Path) -> None:
 
 
 def test_bracelet_dispatches_every_stud() -> None:
-    """If a stud file exists under studs/, bracelet.scad must have a dispatch
+    """If a stud file exists under studs/, the assembly must have a dispatch
     branch for it in place_stud()."""
-    bracelet = (REPO_ROOT / "bracelet.scad").read_text()
+    registry = _assembly_registry_text()
     stud_files = [p.stem for p in _scad_files("studs")]
-    missing = [name for name in stud_files if f'"{name}"' not in bracelet]
+    missing = [name for name in stud_files if f'"{name}"' not in registry]
     assert not missing, (
-        f"bracelet.scad place_stud() is missing dispatch branches for: {missing}. "
+        f"place_stud() is missing dispatch branches for: {missing}. "
         f"Add `else if (name == \"<stud>\") stud_<stud>(size, tip_radius);` for each."
     )
 
 
 def test_bracelet_dispatches_every_latch() -> None:
-    bracelet = (REPO_ROOT / "bracelet.scad").read_text()
+    registry = _assembly_registry_text()
     latch_files = [p.stem for p in _scad_files("latches")]
-    missing = [name for name in latch_files if f'"{name}"' not in bracelet]
+    missing = [name for name in latch_files if f'"{name}"' not in registry]
     assert not missing, (
-        f"bracelet.scad place_latch() is missing dispatch branches for: {missing}"
+        f"place_latch() is missing dispatch branches for: {missing}"
     )
 
 
 def test_bracelet_dispatches_every_pattern() -> None:
-    bracelet = (REPO_ROOT / "bracelet.scad").read_text()
+    registry = _assembly_registry_text()
     pattern_files = [p.stem for p in _scad_files("patterns")]
-    missing = [name for name in pattern_files if f'"{name}"' not in bracelet]
+    missing = [name for name in pattern_files if f'"{name}"' not in registry]
     assert not missing, (
-        f"bracelet.scad pattern_positions() is missing dispatch branches for: {missing}"
+        f"pattern_positions() is missing dispatch branches for: {missing}"
     )

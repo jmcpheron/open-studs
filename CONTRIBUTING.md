@@ -18,7 +18,7 @@ The whole point of this repo is that you can add your own stud, latch, or placem
 
 ## The module signature contract
 
-Every contribution must match these signatures so `bracelet.scad` can mix-and-match them. This is the most important thing in this doc.
+Every contribution must match these signatures so the assembly layer can mix-and-match them. This is the most important thing in this doc. Dispatch lives in `core/surface.scad` for studs/patterns and `core/latch.scad` for latches.
 
 ### Studs — `studs/<name>.scad`
 
@@ -96,6 +96,7 @@ The current state of each file is in the table at the bottom of [`README.md`](RE
 When you open a PR, make sure:
 
 - [ ] The signature matches the contract above (we have a test for this; see [`tests/test_signatures.py`](tests/test_signatures.py)).
+- [ ] The new file is added to the matching dispatch registry in `core/`.
 - [ ] The file compiles with `openscad -o /tmp/test.stl your_file.scad` plus a minimal test wrapper that calls your module.
 - [ ] You've printed it. TPU 95A, 0.2 mm layers, no supports.
 - [ ] A photo of the print is in `gallery/`, filename matches the design.

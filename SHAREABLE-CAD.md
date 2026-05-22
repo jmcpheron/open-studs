@@ -17,7 +17,7 @@ This repo is the fourth project to follow the pattern, after the **PyCon 2026 ge
                               (3MF bundle + slicer profile + photos)
 ```
 
-`.scad` files are already code-trackable, so the Onshape-as-source variants of this pattern need an export step that `open-studs` skips. The parametric source lives in `bracelet.scad`, `studs/*.scad`, `latches/*.scad`, and `patterns/*.scad`. A Python parameter mirror at [`src/open_studs/params.py`](src/open_studs/params.py) holds the same numbers as Python constants, kept in sync by discipline and enforced by a drift test. A Python toolkit at [`src/studslab/`](src/studslab/) does the deconstruction — inspect, render, build, explode, spin. An explainer generator at [`src/explainers/`](src/explainers/) produces docs pages from the parameter file.
+`.scad` files are already code-trackable, so the Onshape-as-source variants of this pattern need an export step that `open-studs` skips. The parametric source lives in `bracelet.scad`, `core/*.scad`, `studs/*.scad`, `latches/*.scad`, and `patterns/*.scad`. A Python parameter mirror at [`src/open_studs/params.py`](src/open_studs/params.py) holds the same numbers as Python constants, kept in sync by discipline and enforced by a drift test. A Python toolkit at [`src/studslab/`](src/studslab/) does the deconstruction — inspect, render, build, explode, spin. An explainer generator at [`src/explainers/`](src/explainers/) produces docs pages from the parameter file.
 
 ## What makes something "shareable CAD"
 

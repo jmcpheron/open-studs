@@ -2,34 +2,97 @@
   {
     "name": "classic_spiked",
     "label": "Classic Spiked",
-    "caption": "Long-spike staggered double row with leather-style buckle. 180 × 22 × 3 mm — medium adult.",
-    "circumference": 180,
-    "width": 22,
-    "thickness": 3,
-    "stl": "stls/classic_spiked.stl",
-    "colorBase": "#1a1a1a",
-    "colorTop": "#cc1f1f"
+    "caption": "Long-spike staggered double row with leather-style buckle.",
+    "band": {
+      "circumference": 180,
+      "width": 22,
+      "thickness": 3,
+      "corner": 4,
+      "flexRelief": "none"
+    },
+    "surface": {
+      "mode": "integral",
+      "stud": "long_spike",
+      "pattern": "staggered",
+      "rows": 2,
+      "studSize": 6,
+      "tipRadius": 0.4
+    },
+    "latch": {
+      "type": "buckle",
+      "clearance": 25
+    },
+    "export": {
+      "stage": "print_flat",
+      "stl": "stls/classic_spiked.stl"
+    },
+    "colors": {
+      "base": "#1a1a1a",
+      "top": "#cc1f1f"
+    }
   },
   {
     "name": "festival_wide",
     "label": "Festival Wide",
-    "caption": "Star studs in a double row, loop-post closure, wider cuff. 200 × 28 × 3 mm — large adult.",
-    "circumference": 200,
-    "width": 28,
-    "thickness": 3,
-    "stl": "stls/festival_wide.stl",
-    "colorBase": "#2a1a3a",
-    "colorTop": "#f0a060"
+    "caption": "Star studs in a double row with loop-post closure.",
+    "band": {
+      "circumference": 200,
+      "width": 28,
+      "thickness": 3,
+      "corner": 4,
+      "flexRelief": "none"
+    },
+    "surface": {
+      "mode": "integral",
+      "stud": "star",
+      "pattern": "double_row",
+      "rows": 2,
+      "studSize": 8,
+      "tipRadius": 0.4
+    },
+    "latch": {
+      "type": "loop_post",
+      "clearance": 25
+    },
+    "export": {
+      "stage": "print_flat",
+      "stl": "stls/festival_wide.stl"
+    },
+    "colors": {
+      "base": "#2a1a3a",
+      "top": "#f0a060"
+    }
   },
   {
     "name": "subtle_daily",
     "label": "Subtle Daily",
-    "caption": "Flat pyramid single row, magnetic clasp, narrow band. 170 × 16 × 3 mm — small adult.",
-    "circumference": 170,
-    "width": 16,
-    "thickness": 3,
-    "stl": "stls/subtle_daily.stl",
-    "colorBase": "#1f1f24",
-    "colorTop": "#6a7a8a"
+    "caption": "Flat pyramid single row with magnetic clasp.",
+    "band": {
+      "circumference": 170,
+      "width": 16,
+      "thickness": 3,
+      "corner": 4,
+      "flexRelief": "none"
+    },
+    "surface": {
+      "mode": "integral",
+      "stud": "flat_pyramid",
+      "pattern": "single_row",
+      "rows": 1,
+      "studSize": 5,
+      "tipRadius": 0.4
+    },
+    "latch": {
+      "type": "magnetic",
+      "clearance": 25
+    },
+    "export": {
+      "stage": "print_flat",
+      "stl": "stls/subtle_daily.stl"
+    },
+    "colors": {
+      "base": "#1f1f24",
+      "top": "#6a7a8a"
+    }
   }
 ]

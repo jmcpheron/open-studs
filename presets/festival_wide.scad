@@ -4,7 +4,7 @@
 // Star studs in a double-row pattern, T-post loop closure, wider band (28mm)
 // for a more cuff-like silhouette, large adult sizing.
 
-include <../bracelet.scad>
+use <../bracelet.scad>
 
 studded_bracelet(
     circumference = 200,

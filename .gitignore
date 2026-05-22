@@ -1,5 +1,6 @@
 # OpenSCAD build outputs — STLs are usually transient, but the configurator
 # preset STLs are tracked artifacts that the showcase viewer loads at runtime.
+build/
 *.stl
 !presets/*.stl
 !docs/configurator/stls/*.stl
@@ -27,6 +28,7 @@ __pycache__/
 *.swp
 *.swo
 .DS_Store
+.playwright-mcp/
 
 # Claude Code project-local state
 .claude/

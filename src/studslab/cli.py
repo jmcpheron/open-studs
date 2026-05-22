@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -91,6 +93,31 @@ def cmd_inspect(path: Path) -> int:
     return 0
 
 
+def cmd_build(path: Path, output: Path | None) -> int:
+    if not path.exists():
+        print(f"error: {path} not found", file=sys.stderr)
+        return 1
+
+    openscad = shutil.which("openscad")
+    if openscad is None:
+        print("error: openscad was not found on PATH", file=sys.stderr)
+        return 1
+
+    out_path = output or path.with_suffix(".stl")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    result = subprocess.run(
+        [openscad, "-o", str(out_path), str(path)],
+        check=False,
+        text=True,
+    )
+    if result.returncode != 0:
+        return result.returncode
+
+    print(f"wrote {out_path}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="studslab",
@@ -101,8 +128,12 @@ def main(argv: list[str] | None = None) -> int:
     p_inspect = sub.add_parser("inspect", help="Show the modules and functions defined in a .scad file.")
     p_inspect.add_argument("path", type=Path)
 
+    p_build = sub.add_parser("build", help="Build a .scad file to STL with openscad.")
+    p_build.add_argument("path", type=Path)
+    p_build.add_argument("-o", "--output", type=Path, help="Output STL path.")
+
     # Placeholders for upcoming commands so the CLI advertises the surface.
-    for cmd in ("render", "build", "explode", "spin"):
+    for cmd in ("render", "explode", "spin"):
         sp = sub.add_parser(cmd, help=f"(not yet implemented) {cmd} a .scad file.")
         sp.add_argument("path", type=Path)
 
@@ -110,6 +141,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "inspect":
         return cmd_inspect(args.path)
+    if args.cmd == "build":
+        return cmd_build(args.path, args.output)
 
     print(f"error: `studslab {args.cmd}` is not yet implemented.", file=sys.stderr)
     print("       See SHAREABLE-CAD.md for the planned surface.", file=sys.stderr)

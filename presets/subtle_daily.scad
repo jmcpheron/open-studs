@@ -4,7 +4,7 @@
 // Flat pyramid studs in a single row, magnetic clasp for fast on/off, narrow
 // (16mm) band, small-adult sizing. The "wear it to work" option.
 
-include <../bracelet.scad>
+use <../bracelet.scad>
 
 studded_bracelet(
     circumference = 170,

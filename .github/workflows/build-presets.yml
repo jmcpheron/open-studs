@@ -13,6 +13,7 @@ on:
     paths:
       - "presets/**"
       - "bracelet.scad"
+      - "core/**"
       - "studs/**"
       - "latches/**"
       - "patterns/**"

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>open-studs — configurator</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <link rel="icon" href="data:,">
   <!-- Import map so Three.js's addon modules can resolve "three" as a bare specifier -->
   <script type="importmap">
@@ -21,27 +21,43 @@
 
   <aside class="controls">
     <h1>open-studs</h1>
-    <p class="tagline">
-      Showcase: bracelet bent around a wrist, two-color layer-swap simulator.
-      The colors map to a filament swap at a chosen print layer.
-    </p>
 
     <label>Preset
       <select id="preset"></select>
     </label>
 
+    <div class="control-group">
+      <span class="control-label">View</span>
+      <div class="segmented" role="group" aria-label="View stage">
+        <button type="button" class="active" data-view-stage="wrist">Wrist</button>
+        <button type="button" data-view-stage="flat">Flat</button>
+      </div>
+    </div>
+
+    <dl class="config-summary" aria-label="Selected bracelet configuration">
+      <div>
+        <dt>Band</dt>
+        <dd id="summary-band"></dd>
+      </div>
+      <div>
+        <dt>Surface</dt>
+        <dd id="summary-surface"></dd>
+      </div>
+      <div>
+        <dt>Latch</dt>
+        <dd id="summary-latch"></dd>
+      </div>
+    </dl>
+
     <label>Base color
-      <span class="hint">(bottom layers — touches the wrist)</span>
       <input type="color" id="color-base" value="#1a1a1a">
     </label>
 
     <label>Top color
-      <span class="hint">(after the filament swap — what people see)</span>
       <input type="color" id="color-top" value="#cc1f1f">
     </label>
 
     <label>Swap at layer <span id="swap-layer-display" class="swap-display">7</span>
-      <span class="hint">(0.2 mm layer height)</span>
       <input type="range" id="swap-layer" min="0" max="15" value="7" step="1">
     </label>
 
@@ -52,6 +68,6 @@
     </p>
   </aside>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 // build-presets workflow on every change to the SCAD tree. The STL is
 // loaded by docs/configurator/app.js into the curved-bracelet viewer.
 
-include <../bracelet.scad>
+use <../bracelet.scad>
 
 studded_bracelet(
     circumference = 180,
