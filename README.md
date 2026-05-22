@@ -1,14 +1,39 @@
 # open-studs
 
+**Design your own 3D-printable studded TPU bracelet in the browser.** Pick the
+bracelet size, stud style, pattern, latch, and print stage, then export JSON or
+OpenSCAD for STL generation.
+
+[**Start Designing**](https://jmcpheron.github.io/open-studs/configurator/) ·
+[Design Architecture](https://jmcpheron.github.io/open-studs/design-architecture.html) ·
+[Latch Lab](https://jmcpheron.github.io/open-studs/latch-lab.html) ·
+[Contributing](CONTRIBUTING.md)
+
+![open-studs bracelet configurator](https://jmcpheron.github.io/open-studs/assets/configurator-controls.jpg)
+
+The configurator starts from printable presets, then lets you adjust the core
+bracelet geometry: length, width, thickness, stud type, stud layout, attachment
+mode, latch, and test-print stage. The preview shows the bracelet worn curved
+around a wrist or laid flat in print orientation.
+
+| Design in the Browser | Print-Orientation Preview |
+| --- | --- |
+| ![Configurator controls](https://jmcpheron.github.io/open-studs/assets/configurator-controls.jpg) | ![Flat print preview](https://jmcpheron.github.io/open-studs/assets/configurator-flat.jpg) |
+
+## Start Here
+
+1. Open the [bracelet configurator](https://jmcpheron.github.io/open-studs/configurator/).
+2. Choose a preset, then adjust band size, stud style, pattern, latch, and export stage.
+3. Download JSON or SCAD. Build locally with `uv run studslab build-config configs/example_bracelet.json -o build/custom.stl`, or use the manual `build-config` GitHub Action.
+
 [![test](https://github.com/jmcpheron/open-studs/actions/workflows/test.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/test.yml)
 [![build-explainers](https://github.com/jmcpheron/open-studs/actions/workflows/build-explainers.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-explainers.yml)
 [![build-scad](https://github.com/jmcpheron/open-studs/actions/workflows/build-scad.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-scad.yml)
 [![build-presets](https://github.com/jmcpheron/open-studs/actions/workflows/build-presets.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/build-presets.yml)
 [![pages](https://github.com/jmcpheron/open-studs/actions/workflows/pages.yml/badge.svg)](https://github.com/jmcpheron/open-studs/actions/workflows/pages.yml)
 
-**Parametric, 3D-printable studded bracelets in TPU.** Punk-and-metal aesthetic, flexible like leather, open-source like it should be.
-
-**[→ Configure a bracelet in the browser](https://jmcpheron.github.io/open-studs/configurator/)** — adjust band size, stud style, surface mode, latch, and print stage; export JSON or SCAD for STL generation.
+**Parametric, 3D-printable studded bracelets in TPU.** Punk-and-metal aesthetic,
+flexible like leather, open-source like it should be.
 
 Designed in OpenSCAD. Browse presets at [jmcpheron.github.io/open-studs](https://jmcpheron.github.io/open-studs). Clone the repo to add your own stud designs, latches, or take it somewhere new.
 
