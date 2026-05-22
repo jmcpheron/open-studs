@@ -6,6 +6,9 @@ include <config.scad>
 use <../latches/buckle.scad>
 use <../latches/snap.scad>
 use <../latches/loop_post.scad>
+use <../latches/mushroom_keyhole.scad>
+use <../latches/ladder_strap.scad>
+use <../latches/loop_post_v2.scad>
 use <../latches/friction_overlap.scad>
 use <../latches/magnetic.scad>
 
@@ -16,6 +19,9 @@ module place_latch(name, band_width, band_thickness, band_length) {
     if      (name == "buckle")            _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "snap")              _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "loop_post")         _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "mushroom_keyhole")  _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "ladder_strap")      _place_two_ended(name, band_width, band_thickness, band_length);
+    else if (name == "loop_post_v2")      _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "friction_overlap")  _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "magnetic")          _place_two_ended(name, band_width, band_thickness, band_length);
     else if (name == "none") { /* no latch */ }
@@ -37,6 +43,21 @@ module _place_two_ended(name, band_width, band_thickness, band_length) {
         latch_loop_post(band_width, band_thickness, end = "left");
         translate([band_length, 0, 0])
             latch_loop_post(band_width, band_thickness, end = "right");
+    }
+    else if (name == "mushroom_keyhole") {
+        latch_mushroom_keyhole(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0])
+            latch_mushroom_keyhole(band_width, band_thickness, end = "right");
+    }
+    else if (name == "ladder_strap") {
+        latch_ladder_strap(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0])
+            latch_ladder_strap(band_width, band_thickness, end = "right");
+    }
+    else if (name == "loop_post_v2") {
+        latch_loop_post_v2(band_width, band_thickness, end = "left");
+        translate([band_length, 0, 0])
+            latch_loop_post_v2(band_width, band_thickness, end = "right");
     }
     else if (name == "friction_overlap") {
         latch_friction_overlap(band_width, band_thickness);

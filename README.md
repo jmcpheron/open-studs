@@ -54,6 +54,9 @@ Different tradeoffs — none is universally best:
 - **Magnetic insert pocket** — premium feel, requires a small neodymium magnet
 - *...and whatever the community adds*
 
+Experimental latch coupons live in [docs/latch-lab.md](docs/latch-lab.md):
+`mushroom_keyhole`, `ladder_strap`, and `loop_post_v2`.
+
 ## Sizing
 
 **Print a test strip before committing to a full bracelet.** TPU stretch varies by brand and infill, and wrist sizes vary more than you'd think. The repo includes `sizing_test.scad` plus focused coupons under `test_prints/` for flex relief, surface attachment, and latch fit.
