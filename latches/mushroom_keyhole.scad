@@ -16,8 +16,8 @@ MUSHROOM_TAB_WIDTH_FR  = 0.68;
 MUSHROOM_ENTRY_D       = 9.4;
 MUSHROOM_CAPTURE_D     = 5.4;
 MUSHROOM_THROAT_W      = 5.1;
-MUSHROOM_ENTRY_X       = 25;
-MUSHROOM_CAPTURE_X     = 12;
+MUSHROOM_ENTRY_X       = 12;
+MUSHROOM_CAPTURE_X     = 25;
 
 module _mk_round_rect_2d(length, width, radius) {
     offset(r = radius) offset(delta = -radius)
@@ -56,12 +56,12 @@ module _mushroom_keyhole_tab(band_width, band_thickness) {
                 cylinder(h = band_thickness + 0.2, d = MUSHROOM_CAPTURE_D, $fn = 36);
 
             translate([
-                MUSHROOM_CAPTURE_X,
+                min(MUSHROOM_ENTRY_X, MUSHROOM_CAPTURE_X),
                 cy - y0 - MUSHROOM_THROAT_W / 2,
                 -0.1
             ])
                 cube([
-                    MUSHROOM_ENTRY_X - MUSHROOM_CAPTURE_X,
+                    abs(MUSHROOM_ENTRY_X - MUSHROOM_CAPTURE_X),
                     MUSHROOM_THROAT_W,
                     band_thickness + 0.2
                 ]);
